@@ -13,7 +13,7 @@
     "test": "stripes serve --port 3001 --okapi http://localhost:3002 & pid1=$! && yakbak-proxy -v -i -n https://folio-snapshot-okapi.aws.indexdata.com & pid2=$! && wait-on http://localhost:3001 && cypress run && kill $pid1 $pid2",
     "regenerate": "stripes serve --port 3001 --okapi http://localhost:3002 & pid1=$! && rm -rf tapes && yakbak-proxy -v -i https://folio-snapshot-okapi.aws.indexdata.com & pid2=$! && wait-on http://localhost:3001 && cypress run && kill $pid1 $pid2",
     "lint": "eslint .",
-    "postinstall": "test -f node_modules/@babel/plugin-proposal-decorators/package.json || yarn add --dev @cypress/code-coverage"
+    "monkey": "bagel"
   },
   "stripes": {
     "actsAs": [
