@@ -1,4 +1,7 @@
-import { createInteractor } from "@bigtest/interactor";
+import { createInteractor, App } from "@bigtest/interactor";
+import { bigtestGlobals } from "@bigtest/globals";
+
+import localForage from 'localforage';
 
 export const Input = createInteractor('Input')({
   selector: 'input',
@@ -17,11 +20,8 @@ export const Input = createInteractor('Input')({
 });
 
 export const Button = createInteractor('Button')({
-  selector: 'button',
-  defaultLocator: (elem) => {
-    console.log(elem.innerText);
-    return elem.innerText.trim();
-  },
+  selector: "button, a[role='button']",
+  defaultLocator: element => element.arialLabel || element.innerText.trim(),
   filters: {
     enabled: {
       apply: (element) => !element.disabled,
@@ -35,6 +35,14 @@ export const Button = createInteractor('Button')({
   }
 });
 
+export const NavButton = createInteractor('Navigation Item')({
+  selector: 'li a',
+  defaultLocator: element => element.ariaLabel,
+  actions: {
+    click: element => element.click()
+  }
+});
+
 export const Heading = createInteractor('Heading')({
   selector: 'h1, h2, h3, h4, h5, h6',
   defaultLocator: (elem) => elem.innerText.trim(),
@@ -42,3 +50,15 @@ export const Heading = createInteractor('Heading')({
     click: (elem) => elem.click()
   }
 });
+
+export function Authenticate(username, password) {
+  bigtestGlobals.defaultInteractorTimeout = 10000;
+  return async () => {
+    await localForage.removeItem('okapiSess');
+    await App.visit('/');
+    await Input('username').focus();
+    await Input('username', { hasFocus: true }).type(username);
+    await Input('password', { hasFocus: true }).type(password);
+    await Button('Log in').click();
+  };
+}
