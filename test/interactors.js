@@ -5,6 +5,9 @@ import localforage from 'localforage';
 export const Input = createInteractor('Input')({
   selector: 'input',
   defaultLocator: (elem) => elem.name,
+  locators: {
+    byAriaLabel: element => element.ariaLabel
+  },
   actions: {
     type: (elem, val) => {
       let evt = new FocusEvent('focus');
@@ -55,6 +58,22 @@ export const Pane = createInteractor('Pane')({
   defaultLocator(element) {
     const title = element.querySelector('[class^=paneTitle]');
     return title ? title.textContent.trim() : '';
+  },
+  filters: {
+    subtext(element) {
+      const subtitle = element.querySelector('[class^=paneSub]');
+      return subtitle ? subtitle.textContent.trim() : '';
+    }
+  }
+});
+
+export const Table = createInteractor('table')({
+  selector: '[class^=mclContainer]',
+  locators: {
+    byId: element => element.id
+  },
+  filters: {
+    length: element => [...element.querySelectorAll('[class^=mclRow-]')].length
   }
 });
 
