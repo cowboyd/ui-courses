@@ -1,18 +1,6 @@
 import { createInteractor, App } from "@bigtest/interactor";
 import { bigtestGlobals } from "@bigtest/globals";
-
-class LocalForage {
-  get instance() {
-    return import('localforage');
-  }
-
-  async removeItem(key) {
-    const forage = await this.instance;
-    return forage.removeItem(key);
-  }
-}
-
-export const localForage = new LocalForage();
+import localforage from 'localforage';
 
 export const Input = createInteractor('Input')({
   selector: 'input',
@@ -32,7 +20,7 @@ export const Input = createInteractor('Input')({
 
 export const Button = createInteractor('Button')({
   selector: "button, a[role='button']",
-  defaultLocator: element => element.arialLabel || element.innerText.trim(),
+  defaultLocator: element => element.ariaLabel || element.innerText.trim(),
   filters: {
     enabled: {
       apply: (element) => !element.disabled,
@@ -62,10 +50,18 @@ export const Heading = createInteractor('Heading')({
   }
 });
 
+export const Pane = createInteractor('Pane')({
+  selector: 'section[class^=pane]',
+  defaultLocator(element) {
+    const title = element.querySelector('[class^=paneTitle]');
+    return title ? title.textContent.trim() : '';
+  }
+});
+
 export function Authenticate(username, password) {
   bigtestGlobals.defaultInteractorTimeout = 10000;
   return async () => {
-    await localForage.removeItem('okapiSess');
+    await localforage.removeItem('okapiSess');
     await App.visit('/');
     await Input('username').focus();
     await Input('username', { hasFocus: true }).type(username);
