@@ -1,7 +1,18 @@
 import { createInteractor, App } from "@bigtest/interactor";
 import { bigtestGlobals } from "@bigtest/globals";
 
-import localForage from 'localforage';
+class LocalForage {
+  get instance() {
+    return import('localforage');
+  }
+
+  async removeItem(key) {
+    const forage = await this.instance;
+    return forage.removeItem(key);
+  }
+}
+
+export const localForage = new LocalForage();
 
 export const Input = createInteractor('Input')({
   selector: 'input',
