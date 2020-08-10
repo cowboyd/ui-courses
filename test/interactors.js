@@ -1,5 +1,5 @@
-import { createInteractor, App } from "@bigtest/interactor";
-import { bigtestGlobals } from "@bigtest/globals";
+import { createInteractor, App } from '@bigtest/interactor';
+import { bigtestGlobals } from '@bigtest/globals';
 import localforage from 'localforage';
 
 export const Input = createInteractor('Input')({
