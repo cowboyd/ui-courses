@@ -2,6 +2,30 @@ import { createInteractor, App } from '@bigtest/interactor';
 import { bigtestGlobals } from '@bigtest/globals';
 import localforage from 'localforage';
 
+export const Accordion = createInteractor('Accordion')({
+  selector: 'section[class^=accordion]',
+  defaultLocator: element => element.querySelector('[class^=labelArea]').textContent.trim(),
+  actions: {
+    toggle: element => element.querySelector('button').click(),
+    select(element, value) {
+      for (const option of element.querySelectorAll('[class^=optionSegment]')) {
+        if (option.textContent.trim() === value) {
+          option.click();
+          return;
+        }
+      }
+      const error = new Error(`no such option ${value}`);
+      error.name = 'NoSuchElementError';
+      throw error;
+    }
+  }
+});
+
+export const Card = createInteractor('Card')({
+  selector: 'div[class^=card]',
+  defaultLocator: element => element.querySelector('[class^=headerStart]').textContent.trim()
+});
+
 export const Input = createInteractor('Input')({
   selector: 'input',
   defaultLocator: (elem) => elem.name,
@@ -37,6 +61,14 @@ export const Button = createInteractor('Button')({
   }
 });
 
+export const Key = createInteractor('Key')({
+  selector: '[class^=kvRoot]',
+  defaultLocator: element => element.querySelector('[class^=kvLabel]').textContent.trim(),
+  filters: {
+    value: element => element.querySelector('[class^=kvValue]').textContent.trim()
+  }
+});
+
 export const NavButton = createInteractor('Navigation Item')({
   selector: 'li a',
   defaultLocator: element => element.ariaLabel,
@@ -60,7 +92,7 @@ export const Pane = createInteractor('Pane')({
     return title ? title.textContent.trim() : '';
   },
   filters: {
-    subtext(element) {
+    subtitle(element) {
       const subtitle = element.querySelector('[class^=paneSub]');
       return subtitle ? subtitle.textContent.trim() : '';
     }
@@ -74,6 +106,13 @@ export const Table = createInteractor('table')({
   },
   filters: {
     length: element => [...element.querySelectorAll('[class^=mclRow-]')].length
+  }
+});
+
+export const TableCell = createInteractor('TableCell')({
+  selector: '[role=gridcell]',
+  actions: {
+    click: element => element.click()
   }
 });
 
